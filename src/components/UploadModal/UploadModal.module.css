@@ -1,0 +1,182 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: var(--background);
+  border-radius: var(--radius-md);
+  width: 95%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text);
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-default);
+}
+
+.closeButton:hover {
+  transform: scale(1.1);
+}
+
+.uploadDropzone {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.uploadDropzone :global(.ut-upload-container) {
+  background-color: rgba(51, 51, 51, 0.05) !important;
+  border: 2px dashed var(--text) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 40px var(--spacing-md) !important;
+  transition: var(--transition-default) !important;
+  cursor: pointer;
+}
+
+.uploadDropzone :global(.ut-label) {
+  color: var(--text) !important;
+  font-size: 16px !important;
+}
+
+.uploadDropzone :global(.ut-allowed-content) {
+  color: var(--text) !important;
+  opacity: 0.7 !important;
+  font-size: 14px !important;
+}
+
+.uploadDropzone :global(.ut-upload-container:hover) {
+  background-color: rgba(51, 51, 51, 0.1) !important;
+}
+
+.uploadDropzone :global(.ut-button) {
+  background-color: var(--text) !important;
+  color: var(--background) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 8px 16px !important;
+  font-weight: bold !important;
+  transition: var(--transition-default) !important;
+}
+
+.uploadDropzone :global(.ut-button:hover) {
+  transform: translateY(-2px) !important;
+}
+
+.preview {
+  margin-top: var(--spacing-md);
+  text-align: center;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: var(--radius-sm);
+}
+
+.formSection {
+  border-top: 1px solid rgba(51, 51, 51, 0.2);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.formSectionTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: var(--spacing-md);
+  color: var(--text);
+}
+
+.radioGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.radioOption {
+  flex: 1;
+  min-width: 120px;
+}
+
+.radioOption input[type="radio"] {
+  display: none;
+}
+
+.radioOption label {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  border: 2px solid var(--text);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition-default);
+  background-color: rgba(51, 51, 51, 0.05);
+}
+
+.radioOption input[type="radio"]:checked + label {
+  background-color: var(--text);
+  color: var(--background);
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: 14px;
+  background-color: var(--text);
+  color: var(--background);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.error {
+  color: #ff4444;
+  font-size: 14px;
+  margin-top: var(--spacing-sm);
+}

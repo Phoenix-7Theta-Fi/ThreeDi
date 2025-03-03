@@ -1,0 +1,24 @@
+:root {
+  --mikado-yellow: #FFC40C;
+  --jet: #333333;
+  
+  /* Additional theme variables */
+  --background: var(--mikado-yellow);
+  --text: var(--jet);
+  --card-bg: var(--jet);
+  --card-text: var(--mikado-yellow);
+  
+  /* Spacing */
+  --spacing-sm: 8px;
+  --spacing-md: 15px;
+  --spacing-lg: 30px;
+  --spacing-xl: 48px;
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 30px;
+  
+  /* Transitions */
+  --transition-default: all 0.2s ease;
+}

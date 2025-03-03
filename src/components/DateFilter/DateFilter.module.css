@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.label {
+  color: var(--card-text);
+  font-weight: bold;
+  margin-right: var(--spacing-md);
+  min-width: 150px;
+  flex-shrink: 0;
+}
+
+.pickerContainer {
+  flex-grow: 1;
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.dateInput {
+  padding: 10px var(--spacing-md);
+  border: 2px solid var(--card-text);
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 196, 12, 0.1);
+  color: var(--card-text);
+  font-size: 16px;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.dateInput:focus {
+  outline: none;
+  background-color: rgba(255, 196, 12, 0.2);
+}
+
+/* Custom date picker styling */
+.dateInput::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(0deg);
+  cursor: pointer;
+}
+
+/* For smaller screens */
+@media (max-width: 600px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .label {
+    margin-right: 0;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .pickerContainer {
+    flex-direction: column;
+  }
+}

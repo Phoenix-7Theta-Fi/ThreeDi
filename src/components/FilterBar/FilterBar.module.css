@@ -1,0 +1,75 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  background-color: var(--card-bg);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--text);
+  border-radius: var(--radius-md);
+  background-color: var(--background);
+  color: var(--text);
+  font-size: 16px;
+  transition: var(--transition-default);
+}
+
+.searchInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.filters {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.select {
+  min-width: 200px;
+  flex: 1;
+}
+
+.selectLabel {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.selectInput {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--text);
+  border-radius: var(--radius-md);
+  background-color: var(--background);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.selectInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+  }
+
+  .select {
+    width: 100%;
+  }
+}
