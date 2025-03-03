@@ -19,7 +19,14 @@ export async function GET(request: Request) {
       return NextResponse.json(chart);
     }
 
-    let query: any = {};
+    interface ChartQuery {
+      $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
+      strategy?: string;
+      marketCap?: string;
+      execution?: string;
+    }
+
+    const query: ChartQuery = {};
 
     // Add search filter
     if (searchQuery) {

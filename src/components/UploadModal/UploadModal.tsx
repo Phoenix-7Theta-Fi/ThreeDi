@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ChartFormData } from '../../types/chart';
 import { UploadDropzone, uploadDropzoneConfig } from '../../lib/uploadthing';
 import { getTodayString } from '../../utils/dateHelpers';
@@ -34,7 +34,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
   const [isStrategyManagerOpen, setIsStrategyManagerOpen] = useState(false);
   const [error, setError] = useState<string>('');
 
-  const fetchStrategies = async () => {
+  const fetchStrategies = useCallback(async () => {
     try {
       const response = await fetch('/api/strategies');
       if (!response.ok) throw new Error('Failed to fetch strategies');
@@ -49,13 +49,13 @@ const UploadModal: React.FC<UploadModalProps> = ({
       console.error('Error fetching strategies:', error);
       setError('Failed to load strategies');
     }
-  };
+  }, [formData.strategy]);
 
   useEffect(() => {
     if (isOpen) {
       fetchStrategies();
     }
-  }, [isOpen]);
+  }, [isOpen, fetchStrategies]);
 
   const handleStrategyManagerClose = () => {
     setIsStrategyManagerOpen(false);
