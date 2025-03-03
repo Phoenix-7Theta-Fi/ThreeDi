@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { ChartFormData, TradingStrategy } from '../../types/chart';
+import React, { useState, useEffect } from 'react';
+import { ChartFormData } from '../../types/chart';
 import { UploadDropzone, uploadDropzoneConfig } from '../../lib/uploadthing';
 import { getTodayString } from '../../utils/dateHelpers';
 import DateFilter from '../DateFilter/DateFilter';
 import Image from 'next/image';
 import styles from './UploadModal.module.css';
+import StrategyManager from '../StrategyManager/StrategyManager';
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -12,22 +13,7 @@ interface UploadModalProps {
   onSubmit: () => void;
 }
 
-const TRADING_STRATEGIES: { value: TradingStrategy; label: string }[] = [
-  { value: 'momentum', label: 'Momentum Trading' },
-  { value: 'price_action', label: 'Price Action' },
-  { value: 'swing', label: 'Swing Trading' },
-  { value: 'scalping', label: 'Scalping' },
-  { value: 'breakout', label: 'Breakout Trading' },
-  { value: 'trend_following', label: 'Trend Following' },
-  { value: 'reversal', label: 'Reversal Trading' },
-  { value: 'support_resistance', label: 'Support & Resistance' },
-  { value: 'channel', label: 'Channel Trading' },
-  { value: 'gap', label: 'Gap Trading' },
-  { value: 'vwap', label: 'VWAP Trading' },
-  { value: 'other', label: 'Other' },
-];
-
-export const UploadModal: React.FC<UploadModalProps> = ({
+const UploadModal: React.FC<UploadModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
@@ -44,6 +30,37 @@ export const UploadModal: React.FC<UploadModalProps> = ({
   });
 
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [strategies, setStrategies] = useState<{ value: string; label: string }[]>([]);
+  const [isStrategyManagerOpen, setIsStrategyManagerOpen] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  const fetchStrategies = async () => {
+    try {
+      const response = await fetch('/api/strategies');
+      if (!response.ok) throw new Error('Failed to fetch strategies');
+      const data = await response.json();
+      setStrategies(data);
+      
+      // If current strategy is not in the list, set to first available strategy
+      if (data.length > 0 && !data.find((s: { value: string }) => s.value === formData.strategy)) {
+        setFormData(prev => ({ ...prev, strategy: data[0].value }));
+      }
+    } catch (error) {
+      console.error('Error fetching strategies:', error);
+      setError('Failed to load strategies');
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchStrategies();
+    }
+  }, [isOpen]);
+
+  const handleStrategyManagerClose = () => {
+    setIsStrategyManagerOpen(false);
+    fetchStrategies(); // Refresh strategies when StrategyManager is closed
+  };
 
   const handleClose = () => {
     resetForm();
@@ -182,19 +199,30 @@ export const UploadModal: React.FC<UploadModalProps> = ({
           <div className={styles.formSection}>
             <div className={styles.formSectionTitle}>Strategy & Market Details</div>
             
-            <select
-              name="strategy"
-              value={formData.strategy}
-              onChange={handleInputChange}
-              className="form-input"
-              required
-            >
-              {TRADING_STRATEGIES.map(({ value, label }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            <div className={styles.strategySection}>
+              <select
+                name="strategy"
+                value={formData.strategy}
+                onChange={handleInputChange}
+                className="form-input"
+                required
+              >
+                {strategies.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className={styles.editStrategyButton}
+                onClick={() => setIsStrategyManagerOpen(true)}
+              >
+                Edit Strategies
+              </button>
+            </div>
+
+            {error && <div className={styles.error}>{error}</div>}
 
             <div className={styles.radioGroup}>
               <div className={styles.radioOption}>
@@ -278,6 +306,12 @@ export const UploadModal: React.FC<UploadModalProps> = ({
           </button>
         </form>
       </div>
+
+      <StrategyManager
+        isOpen={isStrategyManagerOpen}
+        onClose={handleStrategyManagerClose}
+        onUpdate={fetchStrategies}
+      />
     </div>
   );
 };

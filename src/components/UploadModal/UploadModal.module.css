@@ -149,6 +149,29 @@
   color: var(--background);
 }
 
+.strategySection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.editStrategyButton {
+  padding: 8px 16px;
+  background: none;
+  border: 2px solid var(--text);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--transition-default);
+}
+
+.editStrategyButton:hover {
+  background-color: var(--text);
+  color: var(--background);
+}
+
 .submitButton {
   width: 100%;
   margin-top: var(--spacing-md);

@@ -1,0 +1,157 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: var(--background);
+  border-radius: var(--radius-md);
+  width: 95%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text);
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-default);
+}
+
+.closeButton:hover {
+  transform: scale(1.1);
+}
+
+.form {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form input {
+  margin-bottom: var(--spacing-md);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.submitButton,
+.cancelButton {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.submitButton {
+  background-color: var(--text);
+  color: var(--background);
+  border: none;
+}
+
+.cancelButton {
+  background: none;
+  border: 2px solid var(--text);
+  color: var(--text);
+}
+
+.submitButton:hover,
+.cancelButton:hover {
+  transform: translateY(-2px);
+}
+
+.error {
+  color: #ff4444;
+  margin-bottom: var(--spacing-md);
+  font-size: 14px;
+}
+
+.strategyList {
+  border-top: 1px solid rgba(51, 51, 51, 0.2);
+  padding-top: var(--spacing-md);
+}
+
+.strategyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid rgba(51, 51, 51, 0.1);
+}
+
+.strategyInfo {
+  flex: 1;
+}
+
+.strategyValue {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.strategyLabel {
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.strategyActions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.editButton,
+.deleteButton {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.editButton {
+  background: none;
+  border: 1px solid var(--text);
+  color: var(--text);
+}
+
+.deleteButton {
+  background: none;
+  border: 1px solid #ff4444;
+  color: #ff4444;
+}
+
+.editButton:hover,
+.deleteButton:hover {
+  transform: translateY(-1px);
+  opacity: 0.8;
+}

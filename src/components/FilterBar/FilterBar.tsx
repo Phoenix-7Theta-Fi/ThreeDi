@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TradingStrategy, MarketCap, TradeExecution } from '../../types/chart';
 import styles from './FilterBar.module.css';
 
@@ -13,21 +13,7 @@ interface FilterBarProps {
   onExecutionChange: (execution: TradeExecution | 'all') => void;
 }
 
-const TRADING_STRATEGIES = [
-  { value: 'all', label: 'All Strategies' },
-  { value: 'momentum', label: 'Momentum Trading' },
-  { value: 'price_action', label: 'Price Action' },
-  { value: 'swing', label: 'Swing Trading' },
-  { value: 'scalping', label: 'Scalping' },
-  { value: 'breakout', label: 'Breakout Trading' },
-  { value: 'trend_following', label: 'Trend Following' },
-  { value: 'reversal', label: 'Reversal Trading' },
-  { value: 'support_resistance', label: 'Support & Resistance' },
-  { value: 'channel', label: 'Channel Trading' },
-  { value: 'gap', label: 'Gap Trading' },
-  { value: 'vwap', label: 'VWAP Trading' },
-  { value: 'other', label: 'Other' },
-];
+const ALL_STRATEGY_OPTION = { value: 'all', label: 'All Strategies' };
 
 const MARKET_CAP_OPTIONS = [
   { value: 'all', label: 'All Market Caps' },
@@ -51,6 +37,31 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onMarketCapChange,
   onExecutionChange,
 }) => {
+  const [strategies, setStrategies] = useState<Array<{ value: string; label: string }>>([ALL_STRATEGY_OPTION]);
+  const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStrategies();
+  }, []);
+
+  const fetchStrategies = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/strategies');
+      if (!response.ok) throw new Error('Failed to fetch strategies');
+      const data = await response.json();
+      
+      // Combine "All Strategies" with fetched strategies
+      setStrategies([ALL_STRATEGY_OPTION, ...data]);
+      setError('');
+    } catch (error) {
+      console.error('Error fetching strategies:', error);
+      setError('Failed to load strategies');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className={styles.container}>
       <input
@@ -67,14 +78,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           <select
             value={strategy}
             onChange={(e) => onStrategyChange(e.target.value as TradingStrategy | 'all')}
-            className={styles.selectInput}
+            className={`${styles.selectInput} ${isLoading ? styles.loading : ''}`}
+            disabled={isLoading}
           >
-            {TRADING_STRATEGIES.map((option) => (
+            {strategies.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
+          {error && <div className={styles.error}>{error}</div>}
         </div>
 
         <div className={styles.select}>

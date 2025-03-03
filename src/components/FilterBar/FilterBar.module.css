@@ -37,6 +37,7 @@
 .select {
   min-width: 200px;
   flex: 1;
+  position: relative;
 }
 
 .selectLabel {
@@ -61,6 +62,25 @@
 .selectInput:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.selectInput.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.selectInput:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 4px;
+  position: absolute;
+  bottom: -20px;
+  left: 0;
 }
 
 /* Responsive adjustments */
