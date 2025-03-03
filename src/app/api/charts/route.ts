@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCharts, addChart, getChartById, updateChart, deleteChart } from '../../../lib/mongodb';
 import { deleteUploadedFile } from '../uploadthing/core';
+import { TradingStrategy, MarketCap, TradeExecution } from '../../../types/chart';
 
 export async function GET(request: Request) {
   try {
@@ -19,7 +20,14 @@ export async function GET(request: Request) {
       return NextResponse.json(chart);
     }
 
-    let query: any = {};
+    interface ChartQuery {
+      $or?: { [key: string]: { $regex: string, $options: string } }[];
+      strategy?: TradingStrategy;
+      marketCap?: MarketCap;
+      execution?: TradeExecution;
+    }
+
+    const query: ChartQuery = {};
 
     // Add search filter
     if (searchQuery) {
@@ -31,17 +39,17 @@ export async function GET(request: Request) {
 
     // Add strategy filter
     if (strategy !== 'all') {
-      query.strategy = strategy;
+      query.strategy = strategy as TradingStrategy;
     }
 
     // Add marketCap filter
     if (marketCap !== 'all') {
-      query.marketCap = marketCap;
+      query.marketCap = marketCap as MarketCap;
     }
 
     // Add execution filter
     if (execution !== 'all') {
-      query.execution = execution;
+      query.execution = execution as TradeExecution;
     }
 
     const charts = await getCharts(query);
