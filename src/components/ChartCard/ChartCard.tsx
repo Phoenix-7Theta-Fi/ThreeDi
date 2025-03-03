@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { ChartEntry } from '../../types/chart';
 import styles from './ChartCard.module.css';
 
@@ -28,11 +29,15 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart, onClick, onDelete }) => {
           ×
         </button>
       )}
-      <img
-        src={chart.imageUrl}
-        alt={chart.chartName}
-        className={styles.image}
-      />
+      <div className={styles.imageWrapper}>
+        <Image
+          src={chart.imageUrl}
+          alt={chart.chartName}
+          fill
+          className={styles.image}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
       <div className={styles.content}>
         <h3 className={styles.title}>{chart.chartName}</h3>
         <p className={styles.symbol}>{chart.stockSymbol}</p>

@@ -1,33 +1,29 @@
 /** @type {import('next').NextConfig} */
-const config = {
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000'],
-    },
-  },
+const nextConfig = {
   images: {
     remotePatterns: [
       {
-        // This is for UploadThing's image URLs
-        protocol: 'https',
-        hostname: 'uploadthing.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        // For any additional image URLs from UploadThing's CDN
         protocol: 'https',
         hostname: 'utfs.io',
         port: '',
-        pathname: '/**',
+        pathname: '/f/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.ufs.sh',
+        port: '',
+        pathname: '/f/**',
+      }
     ],
   },
-  // Add environment variables to be available at build time
-  env: {
-    MONGODB_URI: process.env.MONGODB_URI,
-    UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.mjs$/,
+      include: /node_modules/,
+      type: 'javascript/auto',
+    });
+    return config;
   },
 };
 
-export default config;
+export default nextConfig;

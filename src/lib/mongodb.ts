@@ -1,4 +1,5 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion, Document } from 'mongodb';
+import { ChartEntry } from '../types/chart';
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please add your MongoDB URI to .env');
@@ -9,10 +10,12 @@ const uri = process.env.MONGODB_URI;
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
+interface GlobalMongo {
+  _mongoClientPromise?: Promise<MongoClient>;
+}
+
 if (process.env.NODE_ENV === 'development') {
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>
-  }
+  const globalWithMongo = global as typeof globalThis & GlobalMongo;
 
   if (!globalWithMongo._mongoClientPromise) {
     client = new MongoClient(uri, {
@@ -46,24 +49,31 @@ export async function getCollection(collectionName: string) {
   return db.collection(collectionName);
 }
 
-// Helper functions for chart operations
-export async function getCharts(query: Record<string, any> = {}) {
-  const collection = await getCollection('charts');
-  return collection.find(query).sort({ createdAt: -1 }).toArray();
+interface ChartQuery {
+  $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
+  strategy?: string;
+  marketCap?: string;
+  execution?: string;
 }
 
-export async function addChart(chart: any) {
+// Helper functions for chart operations
+export async function getCharts(query: ChartQuery = {}) {
   const collection = await getCollection('charts');
-  const result = await collection.insertOne(chart);
+  return collection.find<ChartEntry>(query).sort({ createdAt: -1 }).toArray();
+}
+
+export async function addChart(chart: Omit<ChartEntry, 'id'>) {
+  const collection = await getCollection('charts');
+  const result = await collection.insertOne(chart as Document);
   return result;
 }
 
 export async function getChartById(id: string) {
   const collection = await getCollection('charts');
-  return collection.findOne({ id });
+  return collection.findOne<ChartEntry>({ id });
 }
 
-export async function updateChart(id: string, update: any) {
+export async function updateChart(id: string, update: Partial<ChartEntry>) {
   const collection = await getCollection('charts');
   const result = await collection.updateOne(
     { id },

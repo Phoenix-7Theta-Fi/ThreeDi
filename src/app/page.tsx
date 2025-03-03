@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChartEntry, ChartFormData, TradingStrategy, MarketCap, TradeExecution } from '../types/chart';
+import { ChartEntry, TradingStrategy, MarketCap, TradeExecution } from '../types/chart';
 import { useModal } from '../hooks/useModal';
 import ChartGrid from '../components/ChartGrid/ChartGrid';
 import UploadModal from '../components/UploadModal/UploadModal';
@@ -67,9 +67,8 @@ export default function Home() {
     }
   }, [error]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleUpload = async (formData: ChartFormData) => {
-    // The chart is already saved to MongoDB in the UploadModal
-    // We just need to refresh the charts list
+  // Handle chart upload completion
+  const handleUpload = async () => {
     fetchCharts();
   };
 

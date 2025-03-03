@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { ChartFormData, TradingStrategy, MarketCap, TradeExecution } from '../../types/chart';
+import { ChartFormData, TradingStrategy } from '../../types/chart';
 import { UploadDropzone, uploadDropzoneConfig } from '../../lib/uploadthing';
 import { getTodayString } from '../../utils/dateHelpers';
 import DateFilter from '../DateFilter/DateFilter';
+import Image from 'next/image';
 import styles from './UploadModal.module.css';
 
 interface UploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: ChartFormData) => void;
+  onSubmit: () => void;
 }
 
 const TRADING_STRATEGIES: { value: TradingStrategy; label: string }[] = [
@@ -95,10 +96,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({
       }
 
       handleClose();
-      onSubmit({
-        ...formData,
-        imageUrl: uploadedImageUrl,
-      } as ChartFormData);
+      onSubmit();
     } catch (error) {
       console.error('Error saving chart:', error);
       alert('Failed to save chart. Please try again.');
@@ -136,15 +134,16 @@ export const UploadModal: React.FC<UploadModalProps> = ({
               );
             }}
             onUploadBegin={() => {
-              // Clear any previous errors and show upload in progress
               setUploadedImageUrl(null);
             }}
           />
           {uploadedImageUrl && (
             <div className={styles.preview}>
-              <img
+              <Image
                 src={uploadedImageUrl}
                 alt="Chart preview"
+                width={300}
+                height={169}
                 className={styles.previewImage}
               />
             </div>
