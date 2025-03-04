@@ -18,7 +18,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState<Omit<ChartFormData, 'imageFile'>>({
+  const [formData, setFormData] = useState<ChartFormData>({
     chartName: '',
     stockSymbol: '',
     date: getTodayString(),
@@ -27,12 +27,13 @@ const UploadModal: React.FC<UploadModalProps> = ({
     marketCap: 'large_cap',
     tags: '',
     notes: '',
+    imageUrls: [],
   });
 
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [strategies, setStrategies] = useState<{ value: string; label: string }[]>([]);
   const [isStrategyManagerOpen, setIsStrategyManagerOpen] = useState(false);
   const [error, setError] = useState<string>('');
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   const fetchStrategies = useCallback(async () => {
     try {
@@ -41,7 +42,6 @@ const UploadModal: React.FC<UploadModalProps> = ({
       const data = await response.json();
       setStrategies(data);
       
-      // If current strategy is not in the list, set to first available strategy
       if (data.length > 0 && !data.find((s: { value: string }) => s.value === formData.strategy)) {
         setFormData(prev => ({ ...prev, strategy: data[0].value }));
       }
@@ -59,7 +59,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
 
   const handleStrategyManagerClose = () => {
     setIsStrategyManagerOpen(false);
-    fetchStrategies(); // Refresh strategies when StrategyManager is closed
+    fetchStrategies();
   };
 
   const handleClose = () => {
@@ -77,8 +77,8 @@ const UploadModal: React.FC<UploadModalProps> = ({
       marketCap: 'large_cap',
       tags: '',
       notes: '',
+      imageUrls: [],
     });
-    setUploadedImageUrl(null);
   };
 
   const handleInputChange = (
@@ -88,21 +88,44 @@ const UploadModal: React.FC<UploadModalProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+
+    const images = [...(formData.imageUrls || [])];
+    const draggedImage = images[draggedIndex];
+    images.splice(draggedIndex, 1);
+    images.splice(index, 0, draggedImage);
+
+    setFormData(prev => ({
+      ...prev,
+      imageUrls: images,
+    }));
+    setDraggedIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!uploadedImageUrl) {
+    if (!formData.imageUrls?.length) {
       return;
     }
 
     try {
       const postData = {
         ...formData,
-        imageUrl: uploadedImageUrl,
         id: Math.random().toString(36).substring(2) + Date.now().toString(36),
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
       };
 
-      console.log('Uploading chart with date:', postData.date); // Debug log
+      console.log('Uploading chart with date:', postData.date);
 
       const response = await fetch('/api/charts', {
         method: 'POST',
@@ -124,6 +147,13 @@ const UploadModal: React.FC<UploadModalProps> = ({
     }
   };
 
+  const removeImage = (urlToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      imageUrls: prev.imageUrls?.filter(url => url !== urlToRemove) || [],
+    }));
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -142,8 +172,12 @@ const UploadModal: React.FC<UploadModalProps> = ({
             config={uploadDropzoneConfig}
             className={styles.uploadDropzone}
             onClientUploadComplete={(res) => {
-              if (res?.[0]?.ufsUrl || res?.[0]?.url) {
-                setUploadedImageUrl(res[0].ufsUrl || res[0].url);
+              if (res && res.length > 0) {
+                const newUrls = res.map(file => file.ufsUrl || file.url).filter(Boolean) as string[];
+                setFormData(prev => ({
+                  ...prev,
+                  imageUrls: [...(prev.imageUrls || []), ...newUrls],
+                }));
               }
             }}
             onUploadError={(error: Error) => {
@@ -154,19 +188,37 @@ const UploadModal: React.FC<UploadModalProps> = ({
                   : `Upload error: ${error.message}`
               );
             }}
-            onUploadBegin={() => {
-              setUploadedImageUrl(null);
-            }}
           />
-          {uploadedImageUrl && (
-            <div className={styles.preview}>
-              <Image
-                src={uploadedImageUrl}
-                alt="Chart preview"
-                width={300}
-                height={169}
-                className={styles.previewImage}
-              />
+          
+          {formData.imageUrls?.length > 0 && (
+            <div className={styles.previewGrid}>
+              {formData.imageUrls.map((url, index) => (
+                <div
+                  key={url}
+                  className={`${styles.previewItem} ${draggedIndex === index ? styles.dragging : ''}`}
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <Image
+                    src={url}
+                    alt={`Chart preview ${index + 1}`}
+                    width={300}
+                    height={169}
+                    className={styles.previewImage}
+                  />
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={() => removeImage(url)}
+                    aria-label="Remove image"
+                  >
+                    ×
+                  </button>
+                  <div className={styles.imageIndex}>{index + 1}</div>
+                </div>
+              ))}
             </div>
           )}
 
@@ -304,7 +356,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
           <button
             type="submit"
             className={styles.submitButton}
-            disabled={!uploadedImageUrl || !formData.chartName || !formData.stockSymbol}
+            disabled={!formData.imageUrls?.length || !formData.chartName || !formData.stockSymbol}
           >
             Save to Journal
           </button>

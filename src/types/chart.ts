@@ -20,7 +20,7 @@ export interface ChartEntry {
   chartName: string;
   stockSymbol: string;
   date: string;
-  imageUrl: string;
+  imageUrls: string[];
   strategy: TradingStrategy;
   execution: TradeExecution;
   marketCap: MarketCap;
@@ -39,8 +39,8 @@ export interface ChartFormData {
   marketCap: MarketCap;
   tags: string;
   notes: string;
-  imageFile?: File | null;
-  imageUrl?: string;
+  imageFiles?: File[] | null;
+  imageUrls: string[];
 }
 
 export interface DateFilter {

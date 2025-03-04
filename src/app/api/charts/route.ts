@@ -92,7 +92,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    if (!body.chartName || !body.stockSymbol || !body.imageUrl) {
+    if (!body.chartName || !body.stockSymbol || !body.imageUrls?.length) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -167,7 +167,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Get the chart to find its file key
+    // Get the chart to find its file keys
     const chart = await getChartById(id);
     if (!chart) {
       return NextResponse.json(
@@ -185,11 +185,12 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Extract file key from the URL
-    const fileKey = chart.imageUrl.split('/').pop();
-    if (fileKey) {
-      // Delete the file from UploadThing
-      await deleteUploadedFile(fileKey);
+    // Delete all images from UploadThing
+    for (const imageUrl of chart.imageUrls) {
+      const fileKey = imageUrl.split('/').pop();
+      if (fileKey) {
+        await deleteUploadedFile(fileKey);
+      }
     }
 
     return NextResponse.json({ success: true });

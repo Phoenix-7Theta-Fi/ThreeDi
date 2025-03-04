@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import ImageCarousel from '../ImageCarousel/ImageCarousel';
 import { ChartEntry } from '../../types/chart';
 import styles from './ChartCard.module.css';
 
@@ -49,16 +49,6 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart, onClick, onDelete }) => {
 
   return (
     <div className={styles.card} onClick={handleCardClick}>
-      {onDelete && (
-        <button 
-          className={styles.deleteButton}
-          onClick={handleDelete}
-          title="Delete chart"
-          aria-label="Delete chart"
-        >
-          ×
-        </button>
-      )}
       <div className={styles.imageWrapper}>
         {chart.notes && (
           <>
@@ -81,22 +71,29 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart, onClick, onDelete }) => {
             </div>
           </>
         )}
-        <Image
-          src={chart.imageUrl}
-          alt={chart.chartName}
-          fill
-          className={styles.image}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent card click
-            window.open(chart.imageUrl, '_blank');
+        <ImageCarousel
+          images={chart.imageUrls}
+          onImageClick={(imageUrl) => {
+            window.open(imageUrl, '_blank');
           }}
-          style={{ cursor: 'zoom-in' }}
+          className={styles.image}
         />
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{chart.chartName}</h3>
-        <p className={styles.symbol}>{chart.stockSymbol}</p>
+        <div className={styles.contentText}>
+          <h3 className={styles.title}>{chart.chartName}</h3>
+          <p className={styles.symbol}>{chart.stockSymbol}</p>
+        </div>
+        {onDelete && (
+          <button 
+            className={styles.deleteButton}
+            onClick={handleDelete}
+            title="Delete chart"
+            aria-label="Delete chart"
+          >
+            ×
+          </button>
+        )}
       </div>
     </div>
   );

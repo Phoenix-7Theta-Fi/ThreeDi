@@ -13,7 +13,8 @@ export const uploadButtonConfig = {
 // Configuration for UploadDropzone
 export const uploadDropzoneConfig = {
   mode: "auto" as const,
-  appendOnPaste: true
+  appendOnPaste: true,
+  maxFileCount: 5
 };
 
 // Custom styling for UploadDropzone can be applied through CSS
