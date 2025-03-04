@@ -36,6 +36,11 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart, onClick, onDelete }) => {
           fill
           className={styles.image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent card click
+            window.open(chart.imageUrl, '_blank');
+          }}
+          style={{ cursor: 'zoom-in' }}
         />
       </div>
       <div className={styles.content}>

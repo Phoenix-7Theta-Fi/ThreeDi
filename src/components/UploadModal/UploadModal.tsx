@@ -95,17 +95,21 @@ const UploadModal: React.FC<UploadModalProps> = ({
     }
 
     try {
+      const postData = {
+        ...formData,
+        imageUrl: uploadedImageUrl,
+        id: Math.random().toString(36).substring(2) + Date.now().toString(36),
+        tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+      };
+
+      console.log('Uploading chart with date:', postData.date); // Debug log
+
       const response = await fetch('/api/charts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          imageUrl: uploadedImageUrl,
-          id: Math.random().toString(36).substring(2) + Date.now().toString(36),
-          tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        }),
+        body: JSON.stringify(postData),
       });
 
       if (!response.ok) {

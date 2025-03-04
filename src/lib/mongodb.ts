@@ -54,12 +54,29 @@ interface ChartQuery {
   strategy?: string;
   marketCap?: string;
   execution?: string;
+  date?: {
+    $gte: string;
+    $lte: string;
+  };
 }
 
 // Helper functions for chart operations
 export async function getCharts(query: ChartQuery = {}) {
   const collection = await getCollection('charts');
-  return collection.find<ChartEntry>(query).sort({ createdAt: -1 }).toArray();
+  // Add debug logging
+  if (query.date) {
+    console.log('MongoDB query date range:', query.date);
+  }
+
+  const result = await collection.find<ChartEntry>(query).sort({ createdAt: -1 }).toArray();
+  
+  // Add debug logging for results
+  if (query.date) {
+    console.log('Found charts count:', result.length);
+    console.log('Charts dates:', result.map(chart => chart.date));
+  }
+  
+  return result;
 }
 
 export async function addChart(chart: Omit<ChartEntry, 'id'>) {

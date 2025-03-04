@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChartEntry, TradingStrategy, MarketCap, TradeExecution } from '../types/chart';
 import { useModal } from '../hooks/useModal';
+import { getTodayString, getLastNDays } from '../utils/dateHelpers';
 import ChartGrid from '../components/ChartGrid/ChartGrid';
 import UploadModal from '../components/UploadModal/UploadModal';
 import FilterBar from '../components/FilterBar/FilterBar';
@@ -19,6 +20,9 @@ export default function Home() {
   const [strategy, setStrategy] = useState<TradingStrategy | 'all'>('all');
   const [marketCap, setMarketCap] = useState<MarketCap | 'all'>('all');
   const [execution, setExecution] = useState<TradeExecution | 'all'>('all');
+  const { startDate: defaultStart, endDate: defaultEnd } = getLastNDays(30);
+  const [startDate, setStartDate] = useState(defaultStart);
+  const [endDate, setEndDate] = useState(defaultEnd);
 
   const fetchCharts = async () => {
     try {
@@ -29,6 +33,8 @@ export default function Home() {
         strategy: strategy,
         marketCap: marketCap,
         execution: execution,
+        startDate: startDate,
+        endDate: endDate,
       });
       const response = await fetch(`/api/charts?${params}`);
       
@@ -57,7 +63,7 @@ export default function Home() {
       fetchCharts();
     }, 300);
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, strategy, marketCap, execution]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchQuery, strategy, marketCap, execution, startDate, endDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Retry on error
   useEffect(() => {
@@ -119,10 +125,14 @@ export default function Home() {
         strategy={strategy}
         marketCap={marketCap}
         execution={execution}
+        startDate={startDate}
+        endDate={endDate}
         onSearchChange={setSearchQuery}
         onStrategyChange={setStrategy}
         onMarketCapChange={setMarketCap}
         onExecutionChange={setExecution}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
       />
 
       {error ? (
@@ -143,12 +153,16 @@ export default function Home() {
           onChartClick={handleChartClick}
           onAddChart={openModal}
           onDeleteChart={handleDeleteChart}
-          isFiltered={searchQuery !== '' || strategy !== 'all' || marketCap !== 'all' || execution !== 'all'}
+          isFiltered={searchQuery !== '' || strategy !== 'all' || marketCap !== 'all' || execution !== 'all' || 
+                    startDate !== defaultStart || endDate !== defaultEnd}
           onResetFilters={() => {
+            const { startDate: defaultStart, endDate: defaultEnd } = getLastNDays(30);
             setSearchQuery('');
             setStrategy('all');
             setMarketCap('all');
             setExecution('all');
+            setStartDate(defaultStart);
+            setEndDate(defaultEnd);
           }}
         />
       )}

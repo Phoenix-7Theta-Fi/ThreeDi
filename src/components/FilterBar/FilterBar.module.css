@@ -8,6 +8,12 @@
   border-radius: var(--radius-md);
 }
 
+.searchSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
 .searchInput {
   width: 100%;
   padding: 12px;
@@ -91,5 +97,9 @@
 
   .select {
     width: 100%;
+  }
+
+  .searchSection {
+    gap: var(--spacing-sm);
   }
 }

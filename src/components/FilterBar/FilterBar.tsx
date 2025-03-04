@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TradingStrategy, MarketCap, TradeExecution } from '../../types/chart';
+import { DateFilter } from '../DateFilter/DateFilter';
 import styles from './FilterBar.module.css';
 
 interface FilterBarProps {
@@ -7,10 +8,14 @@ interface FilterBarProps {
   strategy: TradingStrategy | 'all';
   marketCap: MarketCap | 'all';
   execution: TradeExecution | 'all';
+  startDate: string;
+  endDate: string;
   onSearchChange: (query: string) => void;
   onStrategyChange: (strategy: TradingStrategy | 'all') => void;
   onMarketCapChange: (marketCap: MarketCap | 'all') => void;
   onExecutionChange: (execution: TradeExecution | 'all') => void;
+  onStartDateChange: (date: string) => void;
+  onEndDateChange: (date: string) => void;
 }
 
 const ALL_STRATEGY_OPTION = { value: 'all', label: 'All Strategies' };
@@ -32,10 +37,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   strategy,
   marketCap,
   execution,
+  startDate,
+  endDate,
   onSearchChange,
   onStrategyChange,
   onMarketCapChange,
   onExecutionChange,
+  onStartDateChange,
+  onEndDateChange,
 }) => {
   const [strategies, setStrategies] = useState<Array<{ value: string; label: string }>>([ALL_STRATEGY_OPTION]);
   const [error, setError] = useState<string>('');
@@ -64,13 +73,23 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   };
   return (
     <div className={styles.container}>
-      <input
-        type="text"
-        placeholder="Search by chart name or symbol..."
-        value={searchQuery}
-        onChange={(e) => onSearchChange(e.target.value)}
-        className={styles.searchInput}
-      />
+      <div className={styles.searchSection}>
+        <input
+          type="text"
+          placeholder="Search by chart name or symbol..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className={styles.searchInput}
+        />
+        
+        <DateFilter
+          label="Date Range:"
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={onStartDateChange}
+          onEndDateChange={onEndDateChange}
+        />
+      </div>
       
       <div className={styles.filters}>
         <div className={styles.select}>

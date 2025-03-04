@@ -1,12 +1,19 @@
 :root {
   --mikado-yellow: #FFC40C;
   --jet: #333333;
+  --jet-lighter: #444444;
   
   /* Additional theme variables */
   --background: var(--mikado-yellow);
   --text: var(--jet);
   --card-bg: var(--jet);
   --card-text: var(--mikado-yellow);
+  
+  /* Calendar specific variables */
+  --text-primary: var(--mikado-yellow);
+  --text-muted: rgba(255, 196, 12, 0.5);
+  --accent-color: var(--mikado-yellow);
+  --border-color: var(--jet-lighter);
   
   /* Spacing */
   --spacing-sm: 8px;
