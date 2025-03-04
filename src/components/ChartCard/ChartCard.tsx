@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChartEntry } from '../../types/chart';
 import styles from './ChartCard.module.css';
@@ -10,6 +10,26 @@ interface ChartCardProps {
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({ chart, onClick, onDelete }) => {
+  const [showInfo, setShowInfo] = useState(false);
+  const popoverRef = React.useRef<HTMLDivElement>(null);
+  const infoButtonRef = React.useRef<HTMLButtonElement>(null);
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showInfo && 
+          popoverRef.current && 
+          infoButtonRef.current &&
+          !popoverRef.current.contains(event.target as Node) &&
+          !infoButtonRef.current.contains(event.target as Node)) {
+        setShowInfo(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showInfo]);
+
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when deleting
     if (onDelete && window.confirm('Are you sure you want to delete this chart?')) {
@@ -17,8 +37,18 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart, onClick, onDelete }) => {
     }
   };
 
+  const handleInfoClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when showing info
+    setShowInfo(!showInfo);
+  };
+
+  const handleCardClick = () => {
+    setShowInfo(false); // Hide info when card is clicked
+    onClick();
+  };
+
   return (
-    <div className={styles.card} onClick={onClick}>
+    <div className={styles.card} onClick={handleCardClick}>
       {onDelete && (
         <button 
           className={styles.deleteButton}
@@ -30,6 +60,27 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart, onClick, onDelete }) => {
         </button>
       )}
       <div className={styles.imageWrapper}>
+        {chart.notes && (
+          <>
+            <button
+              ref={infoButtonRef}
+              className={styles.infoButton}
+              onClick={handleInfoClick}
+              title="View notes"
+              aria-label="View notes"
+            >
+              i
+            </button>
+            <div 
+              ref={popoverRef}
+              className={`${styles.popover} ${showInfo ? styles.visible : ''}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.popoverHeader}>Chart Notes</div>
+              <div className={styles.popoverContent}>{chart.notes}</div>
+            </div>
+          </>
+        )}
         <Image
           src={chart.imageUrl}
           alt={chart.chartName}
